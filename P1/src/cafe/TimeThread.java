@@ -14,7 +14,7 @@ class TimeThread extends Thread {
         try {
             System.out.println("Кав'ярня відкрита.");
             isOpen.set(true);  // кав'ярня відкрита
-            Thread.sleep(10000);  // Час роботи кав'ярні
+            Thread.sleep(4000);  // Час роботи кав'ярні
             System.out.println("Кав'ярня закривається.");
             isOpen.set(false);  // кав'ярня закрита
         } catch (InterruptedException e) {
