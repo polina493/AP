@@ -34,11 +34,20 @@ public class Main {
 
         // Запускаємо потоки
         barista.start();
-        customer1.start();
-        customer2.start();
-        customer3.start();
-        customer4.start();
-        customer5.start();
-        customer6.start();
+        try {
+            customer1.start();
+            Thread.sleep(0);  // Затримка між клієнтами
+            customer2.start();
+            Thread.sleep(0);
+            customer3.start();
+            Thread.sleep(500);
+            customer4.start();
+            Thread.sleep(1000);
+            customer5.start();
+            Thread.sleep(1000);
+            customer6.start();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
