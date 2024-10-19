@@ -27,6 +27,7 @@ public class Main {
         Thread customer3 = new Thread(new Customer("Клієнт 3", semaphore, isOpen));
         Thread customer4 = new Thread(new Customer("Клієнт 4", semaphore, isOpen));
         Thread customer5 = new Thread(new Customer("Клієнт 5", semaphore, isOpen));
+        Thread customer6 = new Thread(new Customer("Клієнт 6", semaphore, isOpen));
 
         // Створюємо баристу, як окремий потік
         Thread barista = new Thread(new Barista(semaphore, isOpen));
@@ -38,5 +39,6 @@ public class Main {
         customer3.start();
         customer4.start();
         customer5.start();
+        customer6.start();
     }
 }
