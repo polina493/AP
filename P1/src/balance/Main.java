@@ -1,11 +1,7 @@
 package balance;
 
-import java.util.Random;
-import java.util.Scanner;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -107,11 +103,9 @@ public class Main {
 
         @Override
         protected Integer compute() {
-            // Якщо кількість рядків маленька, обробляємо завдання без розбиття
             if (endRow - startRow <= 10) {
                 for (int i = startRow; i < endRow; i++) {
                     for (int j = 0; j < array[i].length; j++) {
-                        // Перевірка, чи елемент дорівнює сумі індексів
                         if (array[i][j] == i + j) {
                             return array[i][j];
                         }
@@ -119,14 +113,13 @@ public class Main {
                 }
                 return null;
             } else {
-                // Розбиття задачі на дві підзадачі
                 int mid = (startRow + endRow) / 2;
                 WorkStealingTask task1 = new WorkStealingTask(array, startRow, mid);
                 WorkStealingTask task2 = new WorkStealingTask(array, mid, endRow);
-                task1.fork(); // Асинхронне виконання першої підзадачі
-                Integer result = task2.compute(); // Виконання другої підзадачі
-                if (result != null) return result; // Якщо знайдено результат, повертаємо його
-                return task1.join(); // Завершення першої підзадачі та повернення результату
+                task1.fork();
+                Integer result = task2.compute();
+                if (result != null) return result;
+                return task1.join();
             }
         }
     }
@@ -146,21 +139,32 @@ public class Main {
         }
 
         public Integer compute() {
-            // Розподіл задач між потоками у пулі
-            for (int i = startRow; i < endRow; i++) {
-                int row = i; // Локальна змінна для лямбда-виразу
-                executorService.submit(() -> {
-                    for (int j = 0; j < array[row].length; j++) {
-                        // Перевірка елемента на відповідність умові
-                        if (array[row][j] == row + j) {
-                            System.out.println("Found element in row " + row);
-                            return array[row][j]; // Повернення знайденого значення
+            try {
+                // Список для збереження задач
+                List<Future<Integer>> futures = new ArrayList<>();
+                for (int i = startRow; i < endRow; i++) {
+                    int row = i;
+                    futures.add(executorService.submit(() -> {
+                        for (int j = 0; j < array[row].length; j++) {
+                            if (array[row][j] == row + j) {
+                                return array[row][j];
+                            }
                         }
+                        return null;
+                    }));
+                }
+
+                // Перевірка результатів
+                for (Future<Integer> future : futures) {
+                    Integer result = future.get(); // Отримання результату
+                    if (result != null) {
+                        return result; // Повернення результату, якщо знайдено
                     }
-                    return null; // Повернення null, якщо елемент не знайдено
-                });
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-            return null; // Загальний випадок, якщо результат не знайдено
+            return null; // Повертаємо null, якщо нічого не знайдено
         }
     }
 }
