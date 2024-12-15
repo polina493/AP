@@ -44,6 +44,11 @@ public class Main {
         // Ініціалізуємо і заповнюємо масив випадковими числами в діапазоні [min, max]
         int[] array = new Random().ints(size, min, max + 1).toArray();
 
+        for (int i =0; i < array.length; i++) {
+            System.out.print(" " + array[i]);
+        }
+        System.out.println();
+
         // Створюємо CopyOnWriteArraySet для зберігання результатів від різних потоків
         CopyOnWriteArraySet<Integer> results = new CopyOnWriteArraySet<>();
 
